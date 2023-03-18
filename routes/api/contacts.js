@@ -7,20 +7,22 @@ const {
   updateContactById,
 } = require("../../controllers/contactController");
 const {
-  checkContactData,
-  checkContactId,
+  validation,
+  ctrlWrapper,
 } = require("../../middlewares/contactMIddlewares");
+const { contactJoiSchema } = require("../../models/contactModel");
 
 const router = express.Router();
 
-router.route("/").get(getContacts).post(checkContactData, createContact);
-
-router.use("/:contactId", checkContactId);
+router
+  .route("/")
+  .get(ctrlWrapper(getContacts))
+  .post(validation(contactJoiSchema), ctrlWrapper(createContact));
 
 router
   .route("/:contactId")
-  .get(getContactById)
-  .delete(deleteContactById)
-  .put(checkContactData, updateContactById);
+  .get(ctrlWrapper(getContactById))
+  .delete(ctrlWrapper(deleteContactById))
+  .put(validation(contactJoiSchema), ctrlWrapper(updateContactById));
 
 module.exports = router;

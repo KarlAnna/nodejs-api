@@ -1,33 +1,38 @@
-const { NotFound, BadRequest } = require("http-errors");
-const { contactSchema } = require("../schemas/contactSchema");
-const { getById } = require("../models/contacts");
-
-const checkContactData = (req, _, next) => {
-  try {
-    const { error } = contactSchema.validate(req.body);
+const validation = (schema) => {
+  return (req, _, next) => {
+    const { error } = schema.validate(req.body);
     if (error) {
-      throw new BadRequest("missing required name field");
+      error.status = 400;
+      next(error);
     }
     next();
-  } catch (error) {
-    next(error);
-  }
+  };
 };
 
-const checkContactId = async (req, _, next) => {
-  try {
-    const { contactId } = req.params;
-    const contact = await getById(contactId);
-    if (!contact) {
-      throw new NotFound();
+const ctrlWrapper = (ctrl) => {
+  return async (req, res, next) => {
+    try {
+      await ctrl(req, res, next);
+    } catch (error) {
+      next(error);
     }
-    next();
-  } catch (error) {
-    next(error);
-  }
+  };
 };
+
+// const checkContactId = async (req, _, next) => {
+//   try {
+//     const { contactId } = req.params;
+//     const contact = await Contact.findById(contactId);
+//     if (!contact) {
+//       throw new NotFound();
+//     }
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 module.exports = {
-  checkContactData,
-  checkContactId,
+  validation,
+  ctrlWrapper,
 };
