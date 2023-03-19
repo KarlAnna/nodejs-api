@@ -5,12 +5,16 @@ const {
   getContactById,
   deleteContactById,
   updateContactById,
+  updateFavoriteById,
 } = require("../../controllers/contactController");
 const {
   validation,
   ctrlWrapper,
 } = require("../../middlewares/contactMIddlewares");
-const { contactJoiSchema } = require("../../models/contactModel");
+const {
+  contactJoiSchema,
+  contactFavoriteJoiSchema,
+} = require("../../models/contactModel");
 
 const router = express.Router();
 
@@ -24,5 +28,9 @@ router
   .get(ctrlWrapper(getContactById))
   .delete(ctrlWrapper(deleteContactById))
   .put(validation(contactJoiSchema), ctrlWrapper(updateContactById));
+
+router
+  .route("/:contactId/favorite")
+  .patch(validation(contactFavoriteJoiSchema), ctrlWrapper(updateFavoriteById));
 
 module.exports = router;

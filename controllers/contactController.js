@@ -1,10 +1,3 @@
-const {
-  listContacts,
-  getById,
-  removeContact,
-  addContact,
-  updateContact,
-} = require("../models/contacts");
 const { NotFound } = require("http-errors");
 
 const { Contact } = require("../models/contactModel");
@@ -74,7 +67,27 @@ const updateContactById = async (req, res) => {
   if (!result) {
     throw new NotFound(`Contact with id: ${contactId} not found`);
   }
-  console.log(result);
+  res.json({
+    status: "success",
+    code: 200,
+    data: {
+      result,
+    },
+  });
+};
+
+//* route("/:contactId/favorite")
+const updateFavoriteById = async (req, res) => {
+  const { contactId } = req.params;
+  const { favorite } = req.body;
+  const result = await Contact.findByIdAndUpdate(
+    contactId,
+    { favorite },
+    { new: true }
+  );
+  if (!result) {
+    throw new NotFound(`Contact with id: ${contactId} not found`);
+  }
   res.json({
     status: "success",
     code: 200,
@@ -90,4 +103,5 @@ module.exports = {
   getContactById,
   deleteContactById,
   updateContactById,
+  updateFavoriteById,
 };
