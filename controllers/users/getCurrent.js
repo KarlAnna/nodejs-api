@@ -1,4 +1,4 @@
-const current = async (req, res) => {
+const getCurrent = async (req, res) => {
   const { email, subscription } = req.user;
   res.json({
     status: "success",
@@ -12,4 +12,4 @@ const current = async (req, res) => {
   });
 };
 
-module.exports = current;
+module.exports = getCurrent;
